@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: web-frontend
+spec:
+  hosts:
+    - '*'  # Accessible via any hostname
+  gateways:
+    - gateway  # This must match the Gateway resource's name you created earlier
+  http:
+    - route:
+        - destination:
+            host: web-frontend.default.svc.cluster.local
+            port:
+              number: 80
+
