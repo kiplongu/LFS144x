@@ -1,3 +1,8 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: web-frontend
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -15,6 +20,7 @@ spec:
         app: web-frontend
         version: v1
     spec:
+      serviceAccountName: web-frontend
       containers:
         - image: gcr.io/tetratelabs/web-frontend:1.0.0
           imagePullPolicy: Always
@@ -38,4 +44,20 @@ spec:
     - port: 80
       name: http
       targetPort: 8080
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: web-frontend
+spec:
+  hosts:
+    - '*'
+  gateways:
+    - gateway
+  http:
+    - route:
+        - destination:
+            host: web-frontend.default.svc.cluster.local
+            port:
+              number: 80
 
